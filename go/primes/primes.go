@@ -1,46 +1,50 @@
 package primes
 
-var primesCache = []int{}
+import (
+	"fmt"
+)
 
-type primes struct {
-	count, value int
+type List struct {
+	Bound  int
+	Primes []int
+	sieve  []bool
 }
 
-func newPrimes() primes {
-	return primes{count: 1, value: 2}
-}
-
-func (t *primes) next() {
-	t.count++
-	if t.count <= len(primesCache) {
-		t.value = primesCache[t.count-1]
-	} else {
-		// TODO: replace with prime sieve
-		for t.value++; true; t.value++ {
-			if isPrime(t.value) {
-				return
+func NewList(bound int) List {
+	sieve := make([]bool, bound)
+	sieve[1] = true
+	var primes []int
+	for i := 2; i < bound; i++ {
+		if sieve[i] == false {
+			primes = append(primes, i)
+			for j := 2 * i; j < bound; j += i {
+				sieve[j] = true
 			}
 		}
 	}
-	return
+	return List{sieve: sieve, Bound: bound, Primes: primes}
 }
 
-func isPrime(num int) bool {
-	for i := 2; i < num; i++ {
-		if num%i == 0 {
-			return false
-		}
+func (l *List) IsPrime(num int) (bool, error) {
+	if num > l.Bound {
+		return false, fmt.Errorf("%d too large for primes size %d", num, l.Bound)
 	}
-	return true
+	return !l.sieve[num], nil
 }
 
-func GetPrimeFactorsMap(num int) map[int]int {
+func (l *List) GetPrimeFactorsMap(num int) (map[int]int, error) {
+	if num > l.Bound {
+		return nil, fmt.Errorf("%d too large for primes size %d", num, l.Bound)
+	}
 	primeFactors := make(map[int]int)
-	for p := newPrimes(); num > 1; p.next() {
-		for num%p.value == 0 {
-			num /= p.value
-			primeFactors[p.value]++
+	for _, p := range l.Primes {
+		for num%p == 0 {
+			num /= p
+			primeFactors[p]++
+		}
+		if num == 1 {
+			break
 		}
 	}
-	return primeFactors
+	return primeFactors, nil
 }
