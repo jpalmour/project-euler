@@ -2,42 +2,48 @@ package primes
 
 import (
 	"fmt"
+	"sort"
 )
 
-type List struct {
-	Bound  int
-	Primes []int
-	sieve  []bool
+type Calc struct {
+	UpperBound int
+	Primes     []int
 }
 
-func NewList(bound int) List {
-	sieve := make([]bool, bound)
+func NewCalc(upperBound int) Calc {
+	primes := sieve(upperBound)
+	return Calc{UpperBound: upperBound, Primes: primes}
+}
+
+func sieve(upperBound int) []int {
+	sieve := make([]bool, upperBound)
 	sieve[1] = true
 	var primes []int
-	for i := 2; i < bound; i++ {
+	for i := 2; i < upperBound; i++ {
 		if sieve[i] == false {
 			primes = append(primes, i)
-			for j := 2 * i; j < bound; j += i {
+			for j := 2 * i; j < upperBound; j += i {
 				sieve[j] = true
 			}
 		}
 	}
-	return List{sieve: sieve, Bound: bound, Primes: primes}
+	return primes
 }
 
-func (l *List) IsPrime(num int) (bool, error) {
-	if num > l.Bound {
-		return false, fmt.Errorf("%d too large for primes size %d", num, l.Bound)
+func (c *Calc) IsPrime(num int) (bool, error) {
+	if err := c.checkBounds(num); err != nil {
+		return false, err
 	}
-	return !l.sieve[num], nil
+	i := sort.SearchInts(c.Primes, num)
+	return c.Primes[i] == num, nil
 }
 
-func (l *List) GetPrimeFactorsMap(num int) (map[int]int, error) {
-	if num > l.Bound {
-		return nil, fmt.Errorf("%d too large for primes size %d", num, l.Bound)
+func (c *Calc) GetPrimeFactorsMap(num int) (map[int]int, error) {
+	if err := c.checkBounds(num); err != nil {
+		return nil, err
 	}
 	primeFactors := make(map[int]int)
-	for _, p := range l.Primes {
+	for _, p := range c.Primes {
 		for num%p == 0 {
 			num /= p
 			primeFactors[p]++
@@ -47,4 +53,11 @@ func (l *List) GetPrimeFactorsMap(num int) (map[int]int, error) {
 		}
 	}
 	return primeFactors, nil
+}
+
+func (c *Calc) checkBounds(num int) error {
+	if num > c.UpperBound {
+		return fmt.Errorf("%d too large for primes size %d", num, c.UpperBound)
+	}
+	return nil
 }
