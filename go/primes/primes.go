@@ -15,6 +15,14 @@ func NewCalc(upperBound int) Calc {
 	return Calc{UpperBound: upperBound, Primes: primes}
 }
 
+func (c *Calc) IsPrime(num int) (bool, error) {
+	if err := c.checkBounds(num); err != nil {
+		return false, err
+	}
+	i := sort.SearchInts(c.Primes, num)
+	return c.Primes[i] == num, nil
+}
+
 func sieve(upperBound int) []int {
 	sieve := make([]bool, upperBound)
 	sieve[1] = true
@@ -30,34 +38,9 @@ func sieve(upperBound int) []int {
 	return primes
 }
 
-func (c *Calc) IsPrime(num int) (bool, error) {
-	if err := c.checkBounds(num); err != nil {
-		return false, err
-	}
-	i := sort.SearchInts(c.Primes, num)
-	return c.Primes[i] == num, nil
-}
-
-func (c *Calc) GetPrimeFactorsMap(num int) (map[int]int, error) {
-	if err := c.checkBounds(num); err != nil {
-		return nil, err
-	}
-	primeFactors := make(map[int]int)
-	for _, p := range c.Primes {
-		for num%p == 0 {
-			num /= p
-			primeFactors[p]++
-		}
-		if num == 1 {
-			break
-		}
-	}
-	return primeFactors, nil
-}
-
 func (c *Calc) checkBounds(num int) error {
 	if num > c.UpperBound {
-		return fmt.Errorf("%d too large for primes size %d", num, c.UpperBound)
+		return fmt.Errorf("%d too large for primes.Calc size %d", num, c.UpperBound)
 	}
 	return nil
 }
