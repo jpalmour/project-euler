@@ -20,7 +20,7 @@ func (c *Calc) IsPrime(num int) (bool, error) {
 		return false, err
 	}
 	i := sort.SearchInts(c.Primes, num)
-	return c.Primes[i] == num, nil
+	return i < len(c.Primes) && c.Primes[i] == num, nil
 }
 
 func sieve(upperBound int) []int {
