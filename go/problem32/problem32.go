@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"reflect"
 	"sort"
+	"strconv"
 )
 
 func main() {
@@ -100,14 +101,13 @@ func permutations(digits []int) [][]int {
 	return perms
 }
 
-// digits are reversed here
 func digitsToInt(digits []int) int {
-	num := 0
-	placeValue := 1
+	numString := ""
 	for _, digit := range digits {
-		num += digit * placeValue
-		placeValue *= 10
+		numString += strconv.Itoa(digit)
 	}
+	num, _ := strconv.Atoi(numString)
+	fmt.Println(num)
 	return num
 }
 
