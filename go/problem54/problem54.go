@@ -49,8 +49,8 @@ func main() {
 
 func getCard(str string) card {
 	val, _ := strconv.Atoi(str[0:1])
-	toVal := map[string]int{"T": 10, "J": 11, "Q": 12, "K": 13, "A": 14}
 	if val == 0 {
+		toVal := map[string]int{"T": 10, "J": 11, "Q": 12, "K": 13, "A": 14}
 		val = toVal[str[0:1]]
 	}
 	x := card{value: val, suit: str[1]}

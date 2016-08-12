@@ -7,9 +7,8 @@ import (
 
 func main() {
 	fmt.Println("Problem 42...")
-	names := strings.Split(input, ",")
 	count := 0
-	for _, name := range names {
+	for _, name := range strings.Split(input, ",") {
 		if isTriangleName(strings.Replace(name, "\"", "", -1)) {
 			count++
 		}
