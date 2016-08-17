@@ -58,7 +58,7 @@ func main() {
 	pc = primes.NewCalc(1000000000)
 	fmt.Println("done calculating primes")
 	minSum := math.MaxInt32
-	for _, combos := range PrimeConcatCombinations(pc.Primes[0:1100], 5) {
+	for _, combos := range PrimeConcatCombinations(pc.Primes[0:1500], 5) {
 		fmt.Println(combos)
 		sum := 0
 		for _, prime := range combos {
